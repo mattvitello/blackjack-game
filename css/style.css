@@ -30,6 +30,29 @@ body{
     height: 20vh;
 }
 
+/*Main content*/
+#dealer-hand{
+    padding-top:30px;
+    position: absolute;
+    width: 100%;
+    height:50%;
+}
+#dealer-hand .col-md-1 img{
+    width:100px;
+    padding-right:10px;
+}
+
+#player-hand{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    height:50%;
+}
+#player-hand .col-md-1 img{
+    width:100px;
+    padding-right:10px;
+}
+
 
 /*Bottom buttons*/
 
