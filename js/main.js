@@ -2,11 +2,7 @@ $(document).ready(function(){
 	
 	var playerHand = []; 	//players current hand
 	var dealerHand = []; 	//dealers current hand
-
-	//add cards to this array and when you get a random card check that it hasn't already been used. 
-	//once the used card total >= 40, reset after that hand has been played.  
-	//only has to be value between 0-51 as there are 52 indexes in cards array.
-	var usedCard = []; 
+	var usedCard = []; 		//used cards 
 
 	var cards = [
 		new card('2', 'clubs', 2),
@@ -18,10 +14,10 @@ $(document).ready(function(){
 		new card('8', 'clubs', 8),
 		new card('9', 'clubs', 9),
 		new card('10', 'clubs', 10),
-		new card('jack', 'clubs', 11),
-		new card('queen', 'clubs', 12),
-		new card('king', 'clubs', 13),
-		new card('ace', 'clubs', 14),    //will have to implement function where this value is either 14 or 1
+		new card('jack', 'clubs', 10),
+		new card('queen', 'clubs', 10),
+		new card('king', 'clubs', 10),
+		new card('ace', 'clubs', 11),    //will have to implement function where this value is either 11 or 1
 		new card('2', 'diamonds', 2),
 		new card('3', 'diamonds', 3),
 		new card('4', 'diamonds', 4),
@@ -31,10 +27,10 @@ $(document).ready(function(){
 		new card('8', 'diamonds', 8),
 		new card('9', 'diamonds', 9),
 		new card('10', 'diamonds', 10),
-		new card('jack', 'diamonds', 11),
-		new card('queen', 'diamonds', 12),
-		new card('king', 'diamonds', 13),
-		new card('ace', 'diamonds', 14),    //will have to implement function where this value is either 14 or 1
+		new card('jack', 'diamonds', 10),
+		new card('queen', 'diamonds', 10),
+		new card('king', 'diamonds', 10),
+		new card('ace', 'diamonds', 11),    //will have to implement function where this value is either 11 or 1
 		new card('2', 'hearts', 2),
 		new card('3', 'hearts', 3),
 		new card('4', 'hearts', 4),
@@ -44,10 +40,10 @@ $(document).ready(function(){
 		new card('8', 'hearts', 8),
 		new card('9', 'hearts', 9),
 		new card('10', 'hearts', 10),
-		new card('jack', 'hearts', 11),
-		new card('queen', 'hearts', 12),
-		new card('king', 'hearts', 13),
-		new card('ace', 'hearts', 14),    //will have to implement function where this value is either 14 or 1
+		new card('jack', 'hearts', 10),
+		new card('queen', 'hearts', 10),
+		new card('king', 'hearts', 10),
+		new card('ace', 'hearts', 11),    //will have to implement function where this value is either 14 or 1
 		new card('2', 'spades', 2),
 		new card('3', 'spades', 3),
 		new card('4', 'spades', 4),
@@ -57,10 +53,10 @@ $(document).ready(function(){
 		new card('8', 'spades', 8),
 		new card('9', 'spades', 9),
 		new card('10', 'spades', 10),
-		new card('jack', 'spades', 11),
-		new card('queen', 'spades', 12),
-		new card('king', 'spades', 13),
-		new card('ace', 'spades', 14),    //will have to implement function where this value is either 14 or 1
+		new card('jack', 'spades', 10),
+		new card('queen', 'spades', 10),
+		new card('king', 'spades', 10),
+		new card('ace', 'spades', 11),    //will have to implement function where this value is either 14 or 1
 	];
 
 	initialize()		//initialize hands
@@ -120,7 +116,6 @@ $(document).ready(function(){
 		}
 		
 	}
-
 
 	//scruct to define cards
 	function card(number,suit,value) {
