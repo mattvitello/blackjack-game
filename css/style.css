@@ -53,6 +53,44 @@ body{
     padding-right:10px;
 }
 
+/*Round Results*/
+#results{
+    padding:101px;
+    padding-top:130px;
+    padding-bottom:50px;
+}
+#results h2{
+    color: red;
+    float:right;
+    display:none;
+}
+
+#info{
+    padding-bottom:60px;
+    padding-right:101px;
+}
+#context{
+    color:red;
+    float:right;
+}
+
+#next{
+    display:none;
+    position: absolute;
+    right: 109px;
+}
+#next-btn{
+    color: red;
+    font-size: 17px;
+    border: 1px solid red;
+    text-align: center;
+    cursor: pointer;
+    padding: 6px 16px;
+    z-index:10;
+}
+#next-btn:hover{
+    text-decoration: none;
+}
 
 /*Bottom buttons*/
 

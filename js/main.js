@@ -67,8 +67,7 @@ $(document).ready(function(){
 	});
 
 	$( "#stay" ).click(function() {
-		alert("You staying here homie");
-		//stay();
+		stay();
 	});
 
 
@@ -148,16 +147,13 @@ $(document).ready(function(){
 		return j;
 	}
 
-
-	/* TO-DO */
-
-	//after we do things check if user or dealer is at 21 or bust
-	function check21(){
+	//returns value of players hand 
+	function getPlayerValue(){
 		var PlayerValue = 0;
 		var amountAce = 0;
 		for (var i = 0; i < playerHand.length; i++){
 			if (amountAce == 0){
-				if (playerHand[i].number == "ace"){
+				if (playerHand[i].number == 'ace'){
 					amountAce = 1;
 				}
 				else{
@@ -168,21 +164,55 @@ $(document).ready(function(){
 				PlayerValue = PlayerValue + playerHand[i].value;
 			}
 		}
-		if(PlayerValue <= 10){
-			PlayerValue = PlayerValue + 11;
+		if(amountAce == 1){
+			if(PlayerValue <= 10){
+				PlayerValue = PlayerValue + 11;
+			}
+			else{
+				PlayerValue = PlayerValue + 1;
+			}
 		}
-		else{
-			PlayerValue = PlayerValue + 1;
-		}
+		return PlayerValue;
+	}
 
+	//returns value of dealers hand
+	function getDealerValue(){
+		var DealerValue = 0;
+		var amountAce = 0;
+		for (var i = 0; i < dealerHand.length; i++){
+			if (amountAce == 0){
+				if (dealerHand[i].number == 'ace'){
+					amountAce = 1;
+				}
+				else{
+					DealerValue = DealerValue + dealerHand[i].value;
+				}
+			}
+			else{
+				DealerValue = DealerValue + dealerHand[i].value;
+			}
+		}
+		if(amountAce == 1){
+			if(DealerValue <= 10){
+				DealerValue = DealerValue + 11;
+			}
+			else{
+				DealerValue = DealerValue + 1;
+			}
+		}
+		return DealerValue;
+	}
+
+	//after we do things check if user or dealer is at 21 or bust
+	function check21(){
+		var PlayerValue = getPlayerValue();
 		if(PlayerValue > 21){
-			//bust
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>You went over 21</span>');
 		}
 		else if(PlayerValue == 21){
-			//win
-		}
-		else{
-			//not over
+			stay();
 		}
 	}	
 
@@ -206,7 +236,7 @@ $(document).ready(function(){
 		playerHand.push(card1); 
 		usedCard.push(j);
 
-		//check21();
+		check21();
 	}
 
 	//simulate what happens on stay button press
@@ -228,16 +258,8 @@ $(document).ready(function(){
 		dealerHand.push(card1); 
 		usedCard.push(j);
 
-		//check dealer's value
-		var DealerValue = 0;
-		for (var i = 0; i < dealerHand.length; i++){
-			DealerValue = DealerValue + dealerHand[i].value;
-		}
-
-		var PlayerValue = 0;
-		for (var i = 0; i < playerHand.length; i++){
-			PlayerValue = PlayerValue + playerHand[i].value;
-		}
+		var DealerValue = getDealerValue();
+		var PlayerValue = getPlayerValue();
 
 		//if dealer < 17 
 		while(DealerValue < 17){
@@ -258,23 +280,29 @@ $(document).ready(function(){
 			dealerHand.push(card1); 
 			usedCard.push(j);
 
-			DealerValue = DealerValue + card1.value;
+			DealerValue = getDealerValue();
 		}
 		
 		//else stay (hand over)
 		if (DealerValue > 21){
-			//bust
-			//Put "Player wins!" on screen
-			//Add button to go to next hand 
+			$('#win').show();
+			$('#next').show();
+			$('#context').append('<span>Dealer went over 21</span>');
 		}
 		else if (DealerValue > PlayerValue){
-			//Dealer win
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>Dealer had a better hand than you</span>');
 		}
 		else if (DealerValue == PlayerValue){
-			//push 
+			$('#draw').show();
+			$('#next').show();
+			$('#context').append('<span>Issa tie</span>');
 		}
 		else{
-			//Player win 
+			$('#win').show();
+			$('#next').show();
+			$('#context').append('<span>You had a better hand than the dealer</span>');
 		}
 
 	}
