@@ -17,7 +17,7 @@ $(document).ready(function(){
 		new card('jack', 'clubs', 10),
 		new card('queen', 'clubs', 10),
 		new card('king', 'clubs', 10),
-		new card('ace', 'clubs', 11),    //will have to implement function where this value is either 11 or 1
+		new card('ace', 'clubs', 1),    //will have to implement function where this value is either 11 or 1
 		new card('2', 'diamonds', 2),
 		new card('3', 'diamonds', 3),
 		new card('4', 'diamonds', 4),
@@ -30,7 +30,7 @@ $(document).ready(function(){
 		new card('jack', 'diamonds', 10),
 		new card('queen', 'diamonds', 10),
 		new card('king', 'diamonds', 10),
-		new card('ace', 'diamonds', 11),    //will have to implement function where this value is either 11 or 1
+		new card('ace', 'diamonds', 1),    //will have to implement function where this value is either 11 or 1
 		new card('2', 'hearts', 2),
 		new card('3', 'hearts', 3),
 		new card('4', 'hearts', 4),
@@ -43,7 +43,7 @@ $(document).ready(function(){
 		new card('jack', 'hearts', 10),
 		new card('queen', 'hearts', 10),
 		new card('king', 'hearts', 10),
-		new card('ace', 'hearts', 11),    //will have to implement function where this value is either 14 or 1
+		new card('ace', 'hearts', 1),    //will have to implement function where this value is either 14 or 1
 		new card('2', 'spades', 2),
 		new card('3', 'spades', 3),
 		new card('4', 'spades', 4),
@@ -56,15 +56,14 @@ $(document).ready(function(){
 		new card('jack', 'spades', 10),
 		new card('queen', 'spades', 10),
 		new card('king', 'spades', 10),
-		new card('ace', 'spades', 11),    //will have to implement function where this value is either 14 or 1
+		new card('ace', 'spades', 1),    //will have to implement function where this value is either 14 or 1
 	];
 
 	initialize()		//initialize hands
 
 
 	$( "#hit" ).click(function() {
-		alert("You been hit mate");
-		//hit(); 
+		hit(); 
 	});
 
 	$( "#stay" ).click(function() {
@@ -76,7 +75,7 @@ $(document).ready(function(){
 	function initialize(){
 
 		//Initialize first two dealer cards
-		for (var i = 0; i<2; i++){
+		for (var i = 0; i<1; i++){
 			var j = getRand();
 			var card1 = cards[j]; 
 			var number = card1.number;
@@ -154,16 +153,129 @@ $(document).ready(function(){
 
 	//after we do things check if user or dealer is at 21 or bust
 	function check21(){
+		var PlayerValue = 0;
+		var amountAce = 0;
+		for (var i = 0; i < playerHand.length; i++){
+			if (amountAce == 0){
+				if (playerHand[i].number == "ace"){
+					amountAce = 1;
+				}
+				else{
+					PlayerValue = PlayerValue + playerHand[i].value;
+				}
+			}
+			else{
+				PlayerValue = PlayerValue + playerHand[i].value;
+			}
+		}
+		if(PlayerValue <= 10){
+			PlayerValue = PlayerValue + 11;
+		}
+		else{
+			PlayerValue = PlayerValue + 1;
+		}
 
-	}
+		if(PlayerValue > 21){
+			//bust
+		}
+		else if(PlayerValue == 21){
+			//win
+		}
+		else{
+			//not over
+		}
+	}	
 
 	//simulate what happens on hit button press
 	function hit(){
+		//add another card
+		var j = getRand();
+		var card1 = cards[j]; 
+		var number = card1.number;
+		var suit = card1.suit;
 
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1'; 
+		document.getElementById('player-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		//add used cards to arrays
+		playerHand.push(card1); 
+		usedCard.push(j);
+
+		//check21();
 	}
 
 	//simulate what happens on stay button press
 	function stay(){
+		var j = getRand();
+		var card1 = cards[j]; 
+		var number = card1.number;
+		var suit = card1.suit;
+
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1'; 
+		document.getElementById('dealer-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		//add used cards to arrays
+		dealerHand.push(card1); 
+		usedCard.push(j);
+
+		//check dealer's value
+		var DealerValue = 0;
+		for (var i = 0; i < dealerHand.length; i++){
+			DealerValue = DealerValue + dealerHand[i].value;
+		}
+
+		var PlayerValue = 0;
+		for (var i = 0; i < playerHand.length; i++){
+			PlayerValue = PlayerValue + playerHand[i].value;
+		}
+
+		//if dealer < 17 
+		while(DealerValue < 17){
+			var j = getRand();
+			var card1 = cards[j]; 
+			var number = card1.number;
+			var suit = card1.suit;
+
+			//add card element to HTML
+			var cardContainer = document.createElement('div');
+			cardContainer.className = 'col-md-1'; 
+			document.getElementById('dealer-hand').appendChild(cardContainer);
+			var cardImg = document.createElement('img');
+			cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+			cardContainer.appendChild(cardImg);
+
+			//add used cards to arrays
+			dealerHand.push(card1); 
+			usedCard.push(j);
+
+			DealerValue = DealerValue + card1.value;
+		}
+		
+		//else stay (hand over)
+		if (DealerValue > 21){
+			//bust
+			//Put "Player wins!" on screen
+			//Add button to go to next hand 
+		}
+		else if (DealerValue > PlayerValue){
+			//Dealer win
+		}
+		else if (DealerValue == PlayerValue){
+			//push 
+		}
+		else{
+			//Player win 
+		}
 
 	}
 
@@ -174,7 +286,11 @@ $(document).ready(function(){
 
 	//implement count
 	function count(){
-
+		//JUST DISPLAY IN LITTLE BOX IN CORNER OF GAME, WILL NEED + or - SIGN BEFORE NUMBER
+		//count starts at 0 when game begins
+		//if card on table = 2, 3, 4, 5, 6, add 1 to the count
+		//if card on table = 7, 8, 9 add 0 to the count
+		//if card on table = 10, J, Q, K, Ace subtract 1 from the count
 	}
 
 
