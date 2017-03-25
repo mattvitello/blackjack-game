@@ -37,6 +37,11 @@ body{
     width: 100%;
     height:50%;
 }
+#dealer-hand #cardBack img{
+    width: 107px;
+    margin-top: -1.6px;
+    margin-left: -2px;
+}
 #dealer-hand .col-md-1 img{
     width:100px;
     padding-right:10px;
@@ -92,7 +97,14 @@ body{
     text-decoration: none;
 }
 
-/*Bottom buttons*/
+/*Right sidebar */
+#sidebar-container{
+    padding-top:10px;
+}
+.sidebar-text{
+    color:white;
+}
+/*Bottom bar*/
 
 #button-wrapper{
   position: relative;

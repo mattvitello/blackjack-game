@@ -3,6 +3,7 @@ $(document).ready(function(){
 	var playerHand = []; 	//players current hand
 	var dealerHand = []; 	//dealers current hand
 	var usedCard = []; 		//used cards 
+	var roundOver;
 
 	var cards = [
 		new card('2', 'clubs', 2),
@@ -63,35 +64,64 @@ $(document).ready(function(){
 
 
 	$( "#hit" ).click(function() {
-		hit(); 
+		if (roundOver != 1){
+			hit();
+		}
 	});
 
 	$( "#stay" ).click(function() {
-		stay();
+		if (roundOver != 1){
+			stay();
+		}
 	});
 
+	//reset hand 
+	$( "#next-btn" ).click(function() {
+		next();
+	});
+
+	function next(){
+		playerHand = []; 	
+		dealerHand = [];
+		$( ".cards" ).remove();	
+		$('#lose').hide();
+		$('#win').hide();
+		$('#draw').hide();
+		$('#next').hide();
+		$('#context').text("");
+		initialize();
+	}
+	
 
 	function initialize(){
-
+		roundOver = 0;
 		//Initialize first two dealer cards
-		for (var i = 0; i<1; i++){
-			var j = getRand();
-			var card1 = cards[j]; 
-			var number = card1.number;
-			var suit = card1.suit;
+		var j = getRand();
+		var card1 = cards[j]; 
+		var number = card1.number;
+		var suit = card1.suit;
 
-			//add card element to HTML
-			var cardContainer = document.createElement('div');
-			cardContainer.className = 'col-md-1'; 
-			document.getElementById('dealer-hand').appendChild(cardContainer);
-			var cardImg = document.createElement('img');
-			cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
-			cardContainer.appendChild(cardImg);
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards'; 
+		document.getElementById('dealer-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
 
-			//add used cards to arrays
-			dealerHand.push(card1); 
-			usedCard.push(j);
-		}
+		//add used cards to arrays
+		dealerHand.push(card1); 
+		usedCard.push(j);
+
+		//add back card
+		var cardContainer2 = document.createElement('div');
+		cardContainer2.className = 'col-md-1 cards'; 
+		cardContainer2.id = "cardBack";
+		document.getElementById('dealer-hand').appendChild(cardContainer2);
+		var cardImg2 = document.createElement('img');
+		cardImg2.src = "img/PNG-cards-1.3/card-back.png";
+		cardContainer2.appendChild(cardImg2);
+
 
 		//Initialize first two player cards
 		for (var i = 0; i<2; i++){
@@ -102,7 +132,7 @@ $(document).ready(function(){
 
 			//add card element to HTML
 			var cardContainer = document.createElement('div');
-			cardContainer.className = 'col-md-1'; 
+			cardContainer.className = 'col-md-1 cards'; 
 			document.getElementById('player-hand').appendChild(cardContainer);
 			var cardImg = document.createElement('img');
 			cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
@@ -112,6 +142,9 @@ $(document).ready(function(){
 			playerHand.push(card1); 
 			usedCard.push(j);
 		}
+
+		getPlayerValue();
+		getDealerValue();		
 		
 	}
 
@@ -172,6 +205,8 @@ $(document).ready(function(){
 				PlayerValue = PlayerValue + 1;
 			}
 		}
+		$('#player-value').text(PlayerValue);
+
 		return PlayerValue;
 	}
 
@@ -200,6 +235,8 @@ $(document).ready(function(){
 				DealerValue = DealerValue + 1;
 			}
 		}
+		$('#dealer-value').text(DealerValue);
+
 		return DealerValue;
 	}
 
@@ -207,6 +244,7 @@ $(document).ready(function(){
 	function check21(){
 		var PlayerValue = getPlayerValue();
 		if(PlayerValue > 21){
+			roundOver = 1;
 			$('#lose').show();
 			$('#next').show();
 			$('#context').append('<span>You went over 21</span>');
@@ -226,7 +264,7 @@ $(document).ready(function(){
 
 		//add card element to HTML
 		var cardContainer = document.createElement('div');
-		cardContainer.className = 'col-md-1'; 
+		cardContainer.className = 'col-md-1 cards'; 
 		document.getElementById('player-hand').appendChild(cardContainer);
 		var cardImg = document.createElement('img');
 		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
@@ -241,6 +279,8 @@ $(document).ready(function(){
 
 	//simulate what happens on stay button press
 	function stay(){
+		$('#cardBack').hide();
+		
 		var j = getRand();
 		var card1 = cards[j]; 
 		var number = card1.number;
@@ -248,7 +288,7 @@ $(document).ready(function(){
 
 		//add card element to HTML
 		var cardContainer = document.createElement('div');
-		cardContainer.className = 'col-md-1'; 
+		cardContainer.className = 'col-md-1 cards'; 
 		document.getElementById('dealer-hand').appendChild(cardContainer);
 		var cardImg = document.createElement('img');
 		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
@@ -270,7 +310,7 @@ $(document).ready(function(){
 
 			//add card element to HTML
 			var cardContainer = document.createElement('div');
-			cardContainer.className = 'col-md-1'; 
+			cardContainer.className = 'col-md-1 cards'; 
 			document.getElementById('dealer-hand').appendChild(cardContainer);
 			var cardImg = document.createElement('img');
 			cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
@@ -283,26 +323,28 @@ $(document).ready(function(){
 			DealerValue = getDealerValue();
 		}
 		
+		roundOver = 1;
+
 		//else stay (hand over)
 		if (DealerValue > 21){
 			$('#win').show();
 			$('#next').show();
-			$('#context').append('<span>Dealer went over 21</span>');
+			$('#context').text("Dealer went over 21");
 		}
 		else if (DealerValue > PlayerValue){
 			$('#lose').show();
 			$('#next').show();
-			$('#context').append('<span>Dealer had a better hand than you</span>');
+			$('#context').text("Dealer had a better hand than you");
 		}
 		else if (DealerValue == PlayerValue){
 			$('#draw').show();
 			$('#next').show();
-			$('#context').append('<span>Issa tie</span>');
+			$('#context').text("");
 		}
 		else{
 			$('#win').show();
 			$('#next').show();
-			$('#context').append('<span>You had a better hand than the dealer</span>');
+			$('#context').text("You had a better hand than the dealer");
 		}
 
 	}
