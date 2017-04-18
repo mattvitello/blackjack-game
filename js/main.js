@@ -1,7 +1,14 @@
 var playerHand = []; 	//players current hand
+var playerHand2 = [];
+
 var dealerHand = []; 	//dealers current hand
 var usedCard = []; 		//used cards 
 var roundOver;
+var beenSplit = 0;
+var beenHit = 0;
+var splited = 0;
+var secondHand = 0;
+var firstHand = 0;
 
 var cards = [
 	new card('2', 'clubs', 2),
@@ -61,9 +68,10 @@ var cards = [
 $(document).ready(function(){	
 	playerHand = []; 	//players current hand
 	dealerHand = []; 	//dealers current hand
+	playerHand2 = [];
 	usedCard = []; 		//used cards 
 	roundOver;
-	initialize()		//initialize hands
+	next();		//initialize hands
 });
 
 
@@ -79,6 +87,24 @@ $( "#stay" ).click(function() {
 	}
 });
 
+$("#double").click(function(){
+	if (roundOver != 1){
+		if(beenHit != 1){
+			double();
+		}
+	}
+});
+
+$("#split").click(function(){
+	if (roundOver != 1){
+		if(firstHand){
+			if(playerHand[0].number == playerHand[1].number){
+				split();
+			}
+		}
+	}
+});
+
 //reset hand 
 $( "#next-btn" ).click(function() {
 	next();
@@ -87,18 +113,38 @@ $( "#next-btn" ).click(function() {
 function next(){
 	playerHand = []; 	
 	dealerHand = [];
+	playerHand2 = [];
+	beenSplit = 0;
+	beenHit = 0;
+	splited = 0;
+	secondHand = 0;
+	firstHand = 0;
 	$( ".cards" ).remove();		
 	$('#lose').hide();
+	$('#lose2').hide();
 	$('#win').hide();
+	$('#win2').hide();
 	$('#draw').hide();
+	$('#draw2').hide();
 	$('#next').hide();
+	$('.player2-text').hide();
 	$('#context').text("");
+	$('#context2').text("");
+	$('#results2').hide();
+	$('#info2').hide();
+
+	$('#double').css("color","#fff");
+	$('#split').css("color","#fff");
+	$('#hit').css("color","#fff");
+	$('#stay').css("color","#fff");
+
 	initialize();
 }
 
 
 function initialize(){
 	roundOver = 0;
+	firstHand = 1;
 	//Initialize first two dealer cards
 	var j = getRand();
 	var card1 = cards[j]; 
@@ -135,7 +181,7 @@ function initialize(){
 
 		//add card element to HTML
 		var cardContainer = document.createElement('div');
-		cardContainer.className = 'col-md-1 cards'; 
+		cardContainer.className = 'col-md-1 cards pcard'; 
 		document.getElementById('player-hand').appendChild(cardContainer);
 		var cardImg = document.createElement('img');
 		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
@@ -144,6 +190,12 @@ function initialize(){
 		//add used cards to arrays
 		playerHand.push(card1); 
 		usedCard.push(j);
+	}
+	if(playerHand[0].number == playerHand[1].number){
+		$('#split').css("color","#fff");
+	}
+	else{
+		$('#split').css("color","#bbb");
 	}
 
 	getPlayerValue();
@@ -209,6 +261,34 @@ function getPlayerValue(){
 	return PlayerValue;
 }
 
+function getPlayer2Value(){
+	var PlayerValue = 0;
+	var amountAce = 0;
+	for (var i = 0; i < playerHand2.length; i++){
+		if (amountAce == 0){
+			if (playerHand2[i].number == 'ace'){
+				amountAce = 1;
+			}
+			else{
+				PlayerValue = PlayerValue + playerHand2[i].value;
+			}
+		}
+		else{
+			PlayerValue = PlayerValue + playerHand2[i].value;
+		}
+	}
+	if(amountAce == 1){
+		if(PlayerValue <= 10){
+			PlayerValue = PlayerValue + 11;
+		}
+		else{
+			PlayerValue = PlayerValue + 1;
+		}
+	}
+	$('#player2-value').text(PlayerValue);
+	return PlayerValue;
+}
+
 	//returns value of dealers hand
 function getDealerValue(){
 	var DealerValue = 0;
@@ -242,63 +322,231 @@ function getDealerValue(){
 function check21(){
 	var PlayerValue = getPlayerValue();
 	if(PlayerValue > 21){
-		roundOver = 1;
-		$('#lose').show();
-		$('#next').show();
-		$('#context').append('<span>You went over 21</span>');
+		if(beenSplit){
+			secondHand = 1;
+			$('#double').css("color","#fff");
+			$( ".card1" ).css("border-left", "none");
+			$( ".card2" ).css("border-left", "5px solid red");
+			beenHit = 0;
+		}
+		else{
+			roundOver = 1;
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>You went over 21</span>');
+
+			if (usedCard.length > 40){
+				usedCard = [];
+			}
+			$('#double').css("color","#bbb");
+			$('#split').css("color","#bbb");
+			$('#hit').css("color","#bbb");
+			$('#stay').css("color","#bbb");
+		}
 	}
 	else if(PlayerValue == 21){
 		stay();
 	}
 }	
 
+function check212(){
+	var PlayerValue = getPlayer2Value();
+	var Player1Value = getPlayerValue();
+
+	if(PlayerValue > 21){
+		if(Player1Value > 21){
+			$('#results2').show();
+			$('#info2').show();
+			$('#lose2').show();
+			$('#context2').append('<span>You went over 21</span>');
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>You went over 21</span>');
+			roundOver = 1;
+			if (usedCard.length > 40){
+				usedCard = [];
+			}
+			$('#double').css("color","#bbb");
+			$('#split').css("color","#bbb");
+			$('#hit').css("color","#bbb");
+			$('#stay').css("color","#bbb");
+		}
+		else{
+			$('#results2').show();
+			$('#info2').show();
+			$('#lose2').show();
+			$('#context2').append('<span>You went over 21</span>');
+
+			roundOver = 1;
+			if (usedCard.length > 40){
+				usedCard = [];
+			}
+			secondHand = 0;
+			splited = 0;
+			stay();
+		}
+	}
+	else if(PlayerValue == 21){
+		stay();
+	}
+}
+
 //simulate what happens on hit button press	
 function hit(){
+	$('#double').css("color","#bbb");
+	firstHand = 0;
+	beenHit = 1;
+	//add another card
+	var j = getRand();
+	var card1 = cards[j];
+	var number = card1.number;
+	var suit = card1.suit;
+
+	if(secondHand){
+		beenSplit = 0;
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player2-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+		//add used cards to arrays
+		playerHand2.push(card1); 
+		usedCard.push(j);
+		check212();
+	}
+	else{
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+		//add used cards to arrays
+		playerHand.push(card1); 
+		usedCard.push(j);
+		check21();
+	}
+}
+
+function double(){
+	firstHand = 0;
 	//add another card
 	var j = getRand();
 	var card1 = cards[j]; 
 	var number = card1.number;
 	var suit = card1.suit;
 
-	//add card element to HTML
+	if(secondHand){
+		beenSplit = 0;
+
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player2-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		playerHand2.push(card1); 
+		var PlayerValue = getPlayer2Value();
+	}
+	else{
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		//add used cards to arrays
+		playerHand.push(card1); 
+		var PlayerValue = getPlayerValue();
+	}
+
+	usedCard.push(j);
+	if(PlayerValue > 21){
+		if(beenSplit){
+			secondHand = 1;
+			$('#double').css("color","#fff");
+			$( ".card1" ).css("border-left", "none");
+			$( ".card2" ).css("border-left", "5px solid red");
+			beenHit = 0;
+		}
+		else{
+			roundOver = 1;
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>You went over 21</span>');
+
+			if (usedCard.length > 40){
+				usedCard = [];
+			}
+			$('#double').css("color","#bbb");
+			$('#split').css("color","#bbb");
+			$('#hit').css("color","#bbb");
+			$('#stay').css("color","#bbb");
+		}
+	}
+	else{
+		stay();
+	}
+}
+
+function split(){
+	$('#split').css("color","#bbb");
+	firstHand = 0;
+	//cards must be same value
+	beenSplit = 1; 
+	splited = 1;
+	//take second card from playerHand and add to playerHand2
+	$( ".pcard" ).remove();
+
+	var myCardNow = playerHand[1];
+	playerHand.length = 1;
+	playerHand2.push(myCardNow);
+
 	var cardContainer = document.createElement('div');
-	cardContainer.className = 'col-md-1 cards'; 
+	cardContainer.className = 'col-md-1 cards pcard card1'; 
 	document.getElementById('player-hand').appendChild(cardContainer);
 	var cardImg = document.createElement('img');
-	cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+	cardImg.src = "img/PNG-cards-1.3/" + playerHand[0].number + "_of_" + playerHand[0].suit + ".png";
 	cardContainer.appendChild(cardImg);
 
-	//add used cards to arrays
-	playerHand.push(card1); 
-	usedCard.push(j);
-	check21();
-	}
+	var cardContainer = document.createElement('div');
+	cardContainer.className = 'col-md-1 cards pcard card2'; 
+	document.getElementById('player2-hand').appendChild(cardContainer);
+	var cardImg = document.createElement('img');
+	cardImg.src = "img/PNG-cards-1.3/" + playerHand2[0].number + "_of_" + playerHand2[0].suit + ".png";
+	cardContainer.appendChild(cardImg);	
+
+	//update values
+	getPlayerValue();
+	getPlayer2Value();
+	getDealerValue();
+
+	$( ".card1" ).css("border-left", "5px solid red");
+	$('.player2-text').show();
+}
+
+
 
 	//simulate what happens on stay button press
 function stay(){
-	$('#cardBack').hide();	
-	var j = getRand();
-	var card1 = cards[j]; 
-	var number = card1.number;
-	var suit = card1.suit;
-
-	//add card element to HTML
-	var cardContainer = document.createElement('div');
-	cardContainer.className = 'col-md-1 cards'; 
-	document.getElementById('dealer-hand').appendChild(cardContainer);
-	var cardImg = document.createElement('img');
-	cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
-	cardContainer.appendChild(cardImg);
-
-	//add used cards to arrays
-	dealerHand.push(card1); 
-	usedCard.push(j);
-		
-	var DealerValue = getDealerValue();
-	var PlayerValue = getPlayerValue();
-
-	//if dealer < 17 
-	while(DealerValue < 17){
+	if(beenSplit)
+	{
+		secondHand = 1;
+		$('#double').css("color","#fff");
+		beenSplit = 0;
+		$( ".card1" ).css("border-left", "none");
+		$( ".card2" ).css("border-left", "5px solid red");
+		beenHit = 0;
+	}	
+	else{
+		$('#cardBack').hide();	
 		var j = getRand();
 		var card1 = cards[j]; 
 		var number = card1.number;
@@ -315,33 +563,88 @@ function stay(){
 		//add used cards to arrays
 		dealerHand.push(card1); 
 		usedCard.push(j);
-		DealerValue = getDealerValue();
-	}
-		
-	roundOver = 1;
 
-	//else stay (hand over)
-	if (DealerValue > 21){
-		$('#win').show();
-		$('#next').show();
-		$('#context').text("Dealer went over 21");
-	}
-	else if (DealerValue > PlayerValue){
-		$('#lose').show();
-		$('#next').show();
-		$('#context').text("Dealer had a better hand than you");
-	}
-	else if (DealerValue == PlayerValue){
-		$('#draw').show();
-		$('#next').show();
-		$('#context').text("");
-	}
-	else{
-		$('#win').show();
-		$('#next').show();
-		$('#context').text("You had a better hand than the dealer");
+		var DealerValue = getDealerValue();
+		var PlayerValue = getPlayerValue();
+		var Player2Value = getPlayer2Value();
+
+		//if dealer < 17 
+		while(DealerValue < 17){
+			var j = getRand();
+			var card1 = cards[j]; 
+			var number = card1.number;
+			var suit = card1.suit;
+
+			//add card element to HTML
+			var cardContainer = document.createElement('div');
+			cardContainer.className = 'col-md-1 cards'; 
+			document.getElementById('dealer-hand').appendChild(cardContainer);
+			var cardImg = document.createElement('img');
+			cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+			cardContainer.appendChild(cardImg);
+
+			//add used cards to arrays
+			dealerHand.push(card1); 
+			usedCard.push(j);
+			DealerValue = getDealerValue();
+		}
+			
+		roundOver = 1;
+
+		//stay (hand over)
+		if (DealerValue > 21){
+			$('#win').show();
+			$('#next').show();
+			$('#context').text("Dealer went over 21");
+		}
+		else if (DealerValue > PlayerValue){
+			$('#lose').show();
+			$('#next').show();
+			$('#context').text("Dealer had a better hand than you");
+		}
+		else if (DealerValue == PlayerValue){
+			$('#draw').show();
+			$('#next').show();
+			$('#context').text("");
+		}
+		else{
+			$('#win').show();
+			$('#next').show();
+			$('#context').text("You had a better hand than the dealer");
+		}
+
+		if(splited){
+			$('#results2').show();
+			$('#info2').show();
+			if (DealerValue > 21){
+				$('#win2').show();
+				$('#context2').text("Dealer went over 21");
+			}
+			else if (DealerValue > Player2Value){
+				$('#lose2').show();
+				$('#context2').text("Dealer had a better hand than you");
+			}
+			else if (DealerValue == Player2Value){
+				$('#draw2').show();
+				$('#context2').text("");
+			}
+			else{
+				$('#win2').show();
+				$('#context2').text("You had a better hand than the dealer");
+			}
+		}
+			$('#double').css("color","#bbb");
+			$('#split').css("color","#bbb");
+			$('#hit').css("color","#bbb");
+			$('#stay').css("color","#bbb");
+
+		if (usedCard.length > 40){
+			usedCard = [];
+		}
 	}
 }
+
+
 
 //implement scare tactic 
 function scare(){

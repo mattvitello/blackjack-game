@@ -15,23 +15,41 @@
         <div class="container" id="sidebar-container">
             <p class="sidebar-text"> Dealer: <span id="dealer-value"></span></p>
             <p class="sidebar-text"> Player: <span id="player-value"></span></p>
+            <p class="sidebar-text player2-text"> Player Two: <span id="player2-value"></span></p>
         </div>
     	</div>
     	<div id="content">
         <div class="container" style="position: relative; height: 100%;">
+
           <div id="dealer-hand">
           </div>
           <div id="player-hand">
           </div>
+          <div id="player2-hand">
+          </div>
+
           <div id="results">
             <h2 id="win">WINNER</h2>
             <h2 id="lose">LOSER</h2>
             <h2 id="draw">DRAW</h2>
             <br/>
           </div>
+
           <div id="info">
             <p id="context"></p>
           </div>
+
+          <div id="results2">
+            <h2 id="win2">WINNER</h2>
+            <h2 id="lose2">LOSER</h2>
+            <h2 id="draw2">DRAW</h2>
+            <br/>
+          </div>
+
+          <div id="info2">
+            <p id="context2"></p>
+          </div>
+
           <div id="next">
             <div id="next-btn">
               <span id="btn-txt">NEXT HAND</span>
@@ -41,11 +59,17 @@
     	</div>
     	<div id="bottombar">
         <div class="container" style="height:100%">
-          <div class="col-md-4" id="button-wrapper">
+          <div class="col-md-3" id="button-wrapper">
             <div id="hit">HIT</div>
           </div>
-          <div class="col-md-4" id="button-wrapper">
+          <div class="col-md-3" id="button-wrapper">
             <div id="stay">STAY</div>
+          </div>
+          <div class="col-md-3" id="button-wrapper">
+            <div id="double">DOUBLE</div>
+          </div>
+          <div class="col-md-3" id="button-wrapper">
+            <div id="split">SPLIT</div>
           </div>
         </div> 
         

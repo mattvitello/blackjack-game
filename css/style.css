@@ -58,10 +58,25 @@ body{
     padding-right:10px;
 }
 
+#player2-hand{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+
+#player2-hand .col-md-1 img{
+    width:100px;
+    padding-right:10px;
+}
 /*Round Results*/
 #results{
     padding:101px;
     padding-top:130px;
+    padding-bottom:50px;
+}
+#results2{
+    padding:101px;
+    padding-top:0px;
     padding-bottom:50px;
 }
 #results h2{
@@ -69,12 +84,19 @@ body{
     float:right;
     display:none;
 }
+#results2 h2{
+    color: red;
+    float:right;
+    display:none;
+}
 
-#info{
+
+#info, #info2{
     padding-bottom:60px;
     padding-right:101px;
 }
-#context{
+
+#context, #context2{
     color:red;
     float:right;
 }
@@ -104,13 +126,26 @@ body{
 .sidebar-text{
     color:white;
 }
+.player2-text{
+    display:none;
+}
 /*Bottom bar*/
 
 #button-wrapper{
   position: relative;
   height: 100%;
 }
-#hit, #stay{
+#hit, #stay, #double{
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#split{
     cursor: pointer;
     color: #fff;
     font-size: 20px;

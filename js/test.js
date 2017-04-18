@@ -1,7 +1,9 @@
 // testing get player value function
 $(document).ready(function(){
 var playerHand = []; 	//players current hand
+var playerHand2 = [];
 var dealerHand = []; 	//dealers current hand
+var roundOver = 0;
 
 test1();
 test2();
@@ -14,6 +16,8 @@ test8();
 test9();
 test10();
 test11();
+//test12();
+//test13();
 
 function test1(){
 	playerHand = [];
@@ -166,6 +170,135 @@ function test11(){
 	}
 }
 
+function test12(){
+	playerHand = [];
+	playerHand.push(new card('jack', 'clubs', 10));
+	playerHand.push(new card('jack', 'clubs', 10));
+	split();
+
+	if (playerHand2[0] != null){
+		console.log("Test 12 Passed");
+	}
+	else{
+		console.log("Test 12 failed")
+	}
+}
+
+function test13(){
+	playerHand = [];
+	playerHand.push(new card('jack', 'clubs', 10));
+	playerHand.push(new card('queen', 'clubs', 10));
+	playerHand.push(new card('5', 'clubs', 5));
+	double();
+
+	if (roundOver){
+		console.log("Test 13 Passed");
+	}
+	else{
+		console.log("Test 13 failed")
+	}
+}
+
+function double(){
+	firstHand = 0;
+	//add another card
+	var j = getRand();
+	var card1 = cards[j]; 
+	var number = card1.number;
+	var suit = card1.suit;
+
+	if(secondHand){
+		beenSplit = 0;
+
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player2-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		playerHand2.push(card1); 
+		var PlayerValue = getPlayer2Value();
+	}
+	else{
+		//add card element to HTML
+		var cardContainer = document.createElement('div');
+		cardContainer.className = 'col-md-1 cards pcard'; 
+		document.getElementById('player-hand').appendChild(cardContainer);
+		var cardImg = document.createElement('img');
+		cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+		cardContainer.appendChild(cardImg);
+
+		//add used cards to arrays
+		playerHand.push(card1); 
+		var PlayerValue = getPlayerValue();
+	}
+
+	usedCard.push(j);
+	if(PlayerValue > 21){
+		if(beenSplit){
+			secondHand = 1;
+			$('#double').css("color","#fff");
+			$( ".card1" ).css("border-left", "none");
+			$( ".card2" ).css("border-left", "5px solid red");
+			beenHit = 0;
+		}
+		else{
+			roundOver = 1;
+			$('#lose').show();
+			$('#next').show();
+			$('#context').append('<span>You went over 21</span>');
+
+			if (usedCard.length > 40){
+				usedCard = [];
+			}
+			$('#double').css("color","#bbb");
+			$('#split').css("color","#bbb");
+			$('#hit').css("color","#bbb");
+			$('#stay').css("color","#bbb");
+		}
+	}
+	else{
+		stay();
+	}
+}
+
+function split(){
+	$('#split').css("color","#bbb");
+	firstHand = 0;
+	//cards must be same value
+	beenSplit = 1; 
+	splited = 1;
+	//take second card from playerHand and add to playerHand2
+	$( ".pcard" ).remove();
+
+	var myCardNow = playerHand[1];
+	playerHand.length = 1;
+	playerHand2.push(myCardNow);
+
+	var cardContainer = document.createElement('div');
+	cardContainer.className = 'col-md-1 cards pcard card1'; 
+	document.getElementById('player-hand').appendChild(cardContainer);
+	var cardImg = document.createElement('img');
+	cardImg.src = "img/PNG-cards-1.3/" + playerHand[0].number + "_of_" + playerHand[0].suit + ".png";
+	cardContainer.appendChild(cardImg);
+
+	var cardContainer = document.createElement('div');
+	cardContainer.className = 'col-md-1 cards pcard card2'; 
+	document.getElementById('player2-hand').appendChild(cardContainer);
+	var cardImg = document.createElement('img');
+	cardImg.src = "img/PNG-cards-1.3/" + playerHand2[0].number + "_of_" + playerHand2[0].suit + ".png";
+	cardContainer.appendChild(cardImg);	
+
+	//update values
+	getPlayerValue();
+	getPlayer2Value();
+	getDealerValue();
+
+	$( ".card1" ).css("border-left", "5px solid red");
+	$('.player2-text').show();
+}
 	//after we do things check if user or dealer is at 21 or bust
 function check21(){
 	var PlayerValue = getPlayerValue();
@@ -205,7 +338,6 @@ function getPlayerValue(){
 				PlayerValue = PlayerValue + 1;
 			}
 		}
-		$('#player-value').text(PlayerValue);
 
 		return PlayerValue;
 	}
@@ -234,7 +366,6 @@ function getDealerValue(){
 			DealerValue = DealerValue + 1;
 		}
 	}
-	$('#dealer-value').text(DealerValue);
 	return DealerValue;
 }
 
