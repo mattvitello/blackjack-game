@@ -129,13 +129,26 @@ body{
 .player2-text{
     display:none;
 }
+
+#hint{
+    text-align: center;
+    border: 1px solid;
+    margin-top: 50px;
+    cursor: pointer;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.count{
+    position: absolute;
+    top: 70%;
+}
 /*Bottom bar*/
 
 #button-wrapper{
   position: relative;
   height: 100%;
 }
-#hit, #stay, #double{
+#hit, #stay, #double, #split{
     cursor: pointer;
     color: #fff;
     font-size: 20px;
@@ -143,14 +156,52 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
+    border: 1px solid;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#hit{
+    padding-left: 69.5px;
+    padding-right: 69.5px;
+}
+
+#stay{
+    padding-left: 61.9px;
+    padding-right: 61.9px;
+}
+
+#double{
+    padding-left: 45px;
+    padding-right: 45px;
 }
 
 #split{
-    cursor: pointer;
-    color: #fff;
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    padding-left: 58.5px;
+    padding-right: 58.5px; 
 }
+
+/* Scare */
+#scare{
+    position: absolute;
+    width: 100%;
+    top:14%;
+}
+
+#scare img{
+    width:500px;
+    position: absolute;
+    left:-450px;
+}
+
+
+
+
+
+
+
+
+
+
+

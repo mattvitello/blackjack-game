@@ -9,6 +9,8 @@ var beenHit = 0;
 var splited = 0;
 var secondHand = 0;
 var firstHand = 0;
+var countValue = 0;
+var scareCounter = 0;
 
 var cards = [
 	new card('2', 'clubs', 2),
@@ -78,6 +80,11 @@ $(document).ready(function(){
 $( "#hit" ).click(function() {
 	if (roundOver != 1){
 		hit();
+		scareCounter++;
+
+		if(scareCounter > 10){
+			scare();
+		}
 	}
 });
 
@@ -85,12 +92,17 @@ $( "#stay" ).click(function() {
 	if (roundOver != 1){
 		stay();
 	}
+	scareCounter++;
 });
 
 $("#double").click(function(){
 	if (roundOver != 1){
 		if(beenHit != 1){
 			double();
+			scareCounter++;
+			if(scareCounter > 10){
+				scare();
+			}
 		}
 	}
 });
@@ -100,11 +112,22 @@ $("#split").click(function(){
 		if(firstHand){
 			if(playerHand[0].number == playerHand[1].number){
 				split();
+				scareCounter++;
+				if(scareCounter > 10){
+					scare();
+				}
 			}
 		}
 	}
 });
 
+$("#hint").click(function(){
+	helpMe();
+	scareCounter = scareCounter + 2;
+	if(scareCounter > 10){
+		scare();
+	}
+});
 //reset hand 
 $( "#next-btn" ).click(function() {
 	next();
@@ -130,9 +153,10 @@ function next(){
 	$('.player2-text').hide();
 	$('#context').text("");
 	$('#context2').text("");
+	$('#advice').text("");
 	$('#results2').hide();
 	$('#info2').hide();
-
+	count();
 	$('#double').css("color","#fff");
 	$('#split').css("color","#fff");
 	$('#hit').css("color","#fff");
@@ -150,6 +174,9 @@ function initialize(){
 	var card1 = cards[j]; 
 	var number = card1.number;
 	var suit = card1.suit;
+
+	//update count
+	count(number);
 
 	//add card element to HTML
 	var cardContainer = document.createElement('div');
@@ -178,6 +205,8 @@ function initialize(){
 		var card1 = cards[j]; 
 		var number = card1.number;
 		var suit = card1.suit;
+
+		count(number);
 
 		//add card element to HTML
 		var cardContainer = document.createElement('div');
@@ -365,6 +394,7 @@ function check212(){
 			roundOver = 1;
 			if (usedCard.length > 40){
 				usedCard = [];
+				countValue = 0;
 			}
 			$('#double').css("color","#bbb");
 			$('#split').css("color","#bbb");
@@ -380,6 +410,7 @@ function check212(){
 			roundOver = 1;
 			if (usedCard.length > 40){
 				usedCard = [];
+				countValue = 0;
 			}
 			secondHand = 0;
 			splited = 0;
@@ -401,6 +432,8 @@ function hit(){
 	var card1 = cards[j];
 	var number = card1.number;
 	var suit = card1.suit;
+
+	count(number);
 
 	if(secondHand){
 		beenSplit = 0;
@@ -429,6 +462,7 @@ function hit(){
 		usedCard.push(j);
 		check21();
 	}
+	$('#advice').text("");
 }
 
 function double(){
@@ -438,6 +472,8 @@ function double(){
 	var card1 = cards[j]; 
 	var number = card1.number;
 	var suit = card1.suit;
+
+	count(number);
 
 	if(secondHand){
 		beenSplit = 0;
@@ -484,6 +520,7 @@ function double(){
 
 			if (usedCard.length > 40){
 				usedCard = [];
+				countValue = 0;
 			}
 			$('#double').css("color","#bbb");
 			$('#split').css("color","#bbb");
@@ -494,6 +531,7 @@ function double(){
 	else{
 		stay();
 	}
+	$('#advice').text("");
 }
 
 function split(){
@@ -523,6 +561,41 @@ function split(){
 	cardImg.src = "img/PNG-cards-1.3/" + playerHand2[0].number + "_of_" + playerHand2[0].suit + ".png";
 	cardContainer.appendChild(cardImg);	
 
+	var j = getRand();
+	var card1 = cards[j];
+	var number = card1.number;
+	var suit = card1.suit;
+	count(number);
+
+	//add card element to HTML
+	var cardContainer = document.createElement('div');
+	cardContainer.className = 'col-md-1 cards pcard'; 
+	document.getElementById('player-hand').appendChild(cardContainer);
+	var cardImg = document.createElement('img');
+	cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+	cardContainer.appendChild(cardImg);
+
+	//add used cards to arrays
+	playerHand.push(card1);
+	usedCard.push(j);
+
+	var j = getRand();
+	var card1 = cards[j];
+	var number = card1.number;
+	var suit = card1.suit;
+	count(number);
+
+	//add card element to HTML
+	var cardContainer = document.createElement('div');
+	cardContainer.className = 'col-md-1 cards pcard'; 
+	document.getElementById('player2-hand').appendChild(cardContainer);
+	var cardImg = document.createElement('img');
+	cardImg.src = "img/PNG-cards-1.3/" + number + "_of_" + suit + ".png";
+	cardContainer.appendChild(cardImg);
+
+	playerHand2.push(card1); 
+	usedCard.push(j);
+
 	//update values
 	getPlayerValue();
 	getPlayer2Value();
@@ -530,11 +603,10 @@ function split(){
 
 	$( ".card1" ).css("border-left", "5px solid red");
 	$('.player2-text').show();
+	$('#advice').text("");
 }
 
-
-
-	//simulate what happens on stay button press
+//simulate what happens on stay button press
 function stay(){
 	if(beenSplit)
 	{
@@ -551,6 +623,7 @@ function stay(){
 		var card1 = cards[j]; 
 		var number = card1.number;
 		var suit = card1.suit;
+		count(number);
 
 		//add card element to HTML
 		var cardContainer = document.createElement('div');
@@ -574,6 +647,7 @@ function stay(){
 			var card1 = cards[j]; 
 			var number = card1.number;
 			var suit = card1.suit;
+			count(number);
 
 			//add card element to HTML
 			var cardContainer = document.createElement('div');
@@ -640,22 +714,113 @@ function stay(){
 
 		if (usedCard.length > 40){
 			usedCard = [];
+			countValue = 0;
 		}
 	}
+	$('#advice').text("");
 }
 
+function helpMe(){
+	var playerValue = getPlayerValue();
+	//var player2Value = getPlayer2Value();
+	var dealerValue = getDealerValue();
 
+	if(playerValue >= 4 && playerValue <= 8){
+		$('#advice').text("Player should hit");
+		//YOU SHOULD HIT 
+	}
+	else if(playerValue == 9 && dealerValue >= 7){
+		$('#advice').text("Player should hit");
+		//YOU SHOULD HIT 
+	}
+	else if(playerValue == 9 && dealerValue < 7 && dealerValue > 2){
+		$('#advice').text("Player should double"); 
+	}
+	else if(playerValue == 10 && dealerValue <= 9){
+		if(playerHand.length < 3){
+			$('#advice').text("Player should double"); 
+		}
+		else{
+			$('#advice').text("Player should hit"); 
+		}
+	}
+	else if(playerValue == 10 && dealerValue > 9){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue == 11){
+		if(playerHand.length < 3){
+			$('#advice').text("Player should double"); 
+		}
+		else{
+			$('#advice').text("Player should hit"); 
+		}
+	}
+	else if(playerValue == 12 && (dealerValue < 4 || dealerValue > 6)){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue == 12 && (dealerValue > 3  && dealerValue < 7)){
+		$('#advice').text("Player should stay");
+		//You should stay
+	}
+	else if(playerValue == 13 && dealerValue < 7){
+		$('#advice').text("Player should stay");
+		//You should stay
+	}
+	else if(playerValue == 13 && dealerValue > 6){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue == 14 && dealerValue < 7){
+		$('#advice').text("Player should stay");
+		//You should stay
+	}
+	else if(playerValue == 14 && dealerValue > 6){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue == 15 && dealerValue < 7){
+		$('#advice').text("Player should stay");
+		//You should stay
+	}
+	else if(playerValue == 15 && dealerValue > 6){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue == 16 && dealerValue < 7){
+		$('#advice').text("Player should stay");
+		//You should stay
+	}
+	else if(playerValue == 16 && dealerValue > 6){
+		$('#advice').text("Player should hit");
+		//You should hit
+	}
+	else if(playerValue >= 17){
+		$('#advice').text("Player should stay");
+		//you should stay
+	}
+
+}
 
 //implement scare tactic 
 function scare(){
-
+	$("#boo").animate({
+		left: "+=2000"
+	}, 1500, function(){
+		$("#boo").css("left", "-450px");
+		$("#boo").show();
+	});
+	scareCounter = 0;
 }
 
 //implement count
-function count(){
-	//JUST DISPLAY IN LITTLE BOX IN CORNER OF GAME, WILL NEED + or - SIGN BEFORE NUMBER
-	//count starts at 0 when game begins
-	//if card on table = 2, 3, 4, 5, 6, add 1 to the count
-	//if card on table = 7, 8, 9 add 0 to the count
-	//if card on table = 10, J, Q, K, Ace subtract 1 from the count
+function count(number){
+	if (number == '2' || number == '3' || number == '4' || number == '5' || number == '6'){
+		countValue++;
+	}
+	else if(number == '10' || number == 'jack' || number == 'queen' || number == 'king' || number == 'ace'){
+		countValue--;
+	}
+	$('#countVal').text(countValue);
 }

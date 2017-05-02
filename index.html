@@ -12,10 +12,13 @@
 <body>
 	<div id="container">
     	<div id="sidebar">
-        <div class="container" id="sidebar-container">
+        <div class="container" id="sidebar-container" style="width: 100%;">
             <p class="sidebar-text"> Dealer: <span id="dealer-value"></span></p>
             <p class="sidebar-text"> Player: <span id="player-value"></span></p>
             <p class="sidebar-text player2-text"> Player Two: <span id="player2-value"></span></p>
+            <p class="sidebar-text" id="hint">HINT</p>
+            <p class="sidebar-text" id="advice"></p>
+            <p class="sidebar-text count">Count: <span id="countVal"></span></p>
         </div>
     	</div>
     	<div id="content">
@@ -74,6 +77,9 @@
         </div> 
         
     	</div>
+        <div id="scare" style="position:absolute;">
+          <img id="boo" src="img/pumpkinman.png"/>
+        </div>
     </div>
 
 	<!--Javascript-->
