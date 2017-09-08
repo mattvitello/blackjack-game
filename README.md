@@ -1,1 +1,1 @@
-Very neat blackjack game
+Static HTML blackjack game created for the course Software Methodologies. 

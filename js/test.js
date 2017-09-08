@@ -4,8 +4,9 @@ var playerHand = []; 	//players current hand
 var playerHand2 = [];
 var dealerHand = []; 	//dealers current hand
 var roundOver = 0;
+var countValue = 0;
 
-test1();
+/*test1();
 test2();
 test3();
 test4();
@@ -15,9 +16,11 @@ test7();
 test8();
 test9();
 test10();
-test11();
+test11();*/
 //test12();
 //test13();
+test14();
+test15();
 
 function test1(){
 	playerHand = [];
@@ -197,6 +200,40 @@ function test13(){
 	else{
 		console.log("Test 13 failed")
 	}
+}
+
+
+function test14(){
+	count('jack');
+	count('9');
+	if (countValue == -1){
+		console.log("Test 14 Passed");
+	}
+	else{
+		console.log("Test 14 failed")
+	}
+}
+
+function test15(){
+	count('2');
+	count('ace');
+	if (countValue == 0){
+		console.log("Test 15 Passed");
+	}
+	else{
+		console.log("Test 15 Passed");
+	}
+}
+
+
+function count(number){
+	if (number == '2' || number == '3' || number == '4' || number == '5' || number == '6'){
+		countValue++;
+	}
+	else if(number == '10' || number == 'jack' || number == 'queen' || number == 'king' || number == 'ace'){
+		countValue--;
+	}
+	//$('#countVal').text(countValue);
 }
 
 function double(){
